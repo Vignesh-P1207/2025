@@ -1,0 +1,37 @@
+import pandas as pd
+
+df = pd.read_csv('weather_data.csv')
+test_instance = ['Sunny', 'Cool', 'High', 'Strong']
+
+def separate_by_class(data):
+    separated = {}
+    for _, row in data.iterrows():
+        cls = row['Play']
+        features = row[:-1].tolist()
+        separated.setdefault(cls, []).append(features)
+    return separated
+
+def prior_prob(separated):
+    total = sum(len(v) for v in separated.values())
+    return {cls: len(v)/total for cls, v in separated.items()}
+
+def likelihood(index, value, class_rows):
+    count = sum(1 for row in class_rows if row[index] == value)
+    return count / len(class_rows) if len(class_rows) > 0 else 0
+
+def predict(test_instance, data):
+    separated = separate_by_class(data)
+    priors = prior_prob(separated)
+    posteriors = {}
+    for cls, rows in separated.items():
+        prob = priors[cls]
+        for i in range(len(test_instance)):
+            prob *= likelihood(i, test_instance[i], rows)
+        posteriors[cls] = prob
+    prediction = max(posteriors, key=posteriors.get)
+    return prediction, posteriors
+
+prediction, probs = predict(test_instance, df)
+print("Test Instance:", test_instance)
+print("Posterior Probabilities:", probs)
+print("Predicted Class:", prediction)

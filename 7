@@ -1,0 +1,52 @@
+import random
+
+neighbors = {
+    'TN': ['KL', 'KA', 'AP'],
+    'KL': ['TN', 'KA'],
+    'KA': ['KL', 'TN', 'AP', 'TG'],
+    'AP': ['TN', 'KA', 'TG'],
+    'TG': ['KA', 'AP']
+}
+colors = ['Red', 'Green', 'Blue']
+
+def count_conflicts(assignment, neighbors):
+    conflicts = 0
+    for region in neighbors:
+        for neighbor in neighbors[region]:
+            if assignment[region] == assignment.get(neighbor):
+                conflicts += 1
+    return conflicts // 2
+
+def hill_climbing(neighbors, colors, max_steps=1000):
+    assignment = {region: random.choice(colors) for region in neighbors}
+    for step in range(max_steps):
+        current_conflicts = count_conflicts(assignment, neighbors)
+        if current_conflicts == 0:
+            return assignment
+        improved = False
+        for region in neighbors:
+            min_conflict = current_conflicts
+            best_color = assignment[region]
+            for color in colors:
+                if color == assignment[region]:
+                    continue
+                original = assignment[region]
+                assignment[region] = color
+                temp_conflict = count_conflicts(assignment, neighbors)
+                if temp_conflict < min_conflict:
+                    best_color = color
+                    min_conflict = temp_conflict
+                    improved = True
+                assignment[region] = original
+            assignment[region] = best_color
+        if not improved:
+            break
+    return assignment if count_conflicts(assignment, neighbors) == 0 else None
+
+solution = hill_climbing(neighbors, colors)
+if solution:
+    print("Hill-Climbing Map Coloring Solution:")
+    for state in sorted(solution):
+        print(f"{state}: {solution[state]}")
+else:
+    print("No solution found (local maximum reached).")

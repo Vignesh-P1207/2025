@@ -1,0 +1,29 @@
+rules = {
+    "C": ["A", "B"],
+    "D": ["C"],
+    "F": ["D", "E"],
+    "G": ["F"]
+}
+facts = {"A", "B", "E"}
+
+def backward_chaining(goal, facts, rules, visited=None):
+    if visited is None:
+        visited = set()
+    if goal in facts:
+        return True
+    if goal in visited:
+        return False
+    visited.add(goal)
+    if goal not in rules:
+        return False
+    for premise in rules[goal]:
+        if not backward_chaining(premise, facts, rules, visited):
+            return False
+    facts.add(goal)
+    print(f"Inferred: {goal}")
+    return True
+
+goal = "G"
+result = backward_chaining(goal, facts, rules)
+print("\nFinal Facts:", facts)
+print("Goal Reached:", result)

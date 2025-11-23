@@ -1,0 +1,34 @@
+def dfs(image, x, y, oldColor, newColor):
+    if (x < 0 or x >= len(image) or
+        y < 0 or y >= len(image[0]) or
+        image[x][y] != oldColor):
+        return
+
+    image[x][y] = newColor
+    dfs(image, x + 1, y, oldColor, newColor)
+    dfs(image, x - 1, y, oldColor, newColor)
+    dfs(image, x, y + 1, oldColor, newColor)
+    dfs(image, x, y - 1, oldColor, newColor)
+
+def floodFill(image, sr, sc, newColor):
+    if image[sr][sc] == newColor:
+        return image
+    dfs(image, sr, sc, image[sr][sc], newColor)
+    return image
+
+if __name__ == "__main__":
+    image = [
+        [1, 1, 1, 0],
+        [0, 1, 1, 1],
+        [1, 0, 1, 1]
+    ]
+    print("Original Image:")
+    for row in image:
+        print(" ".join(map(str, row)))
+
+    sr, sc, newColor = 1, 1, 2
+    result = floodFill(image, sr, sc, newColor)
+
+    print("\nFlood-Filled Image:")
+    for row in result:
+        print(" ".join(map(str, row)))

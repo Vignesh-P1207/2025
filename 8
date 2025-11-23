@@ -1,0 +1,37 @@
+from itertools import product
+
+def evaluate(formula, assignment):
+    replaced = formula
+    for var, val in assignment.items():
+        replaced = replaced.replace(var, str(val))
+    try:
+        return eval(replaced)
+    except:
+        return False
+
+def get_variables(formula):
+    return sorted(set([c for c in formula if c.isalpha()]))
+
+def model_checking(formula):
+    variables = get_variables(formula)
+    combinations = list(product([False, True], repeat=len(variables)))
+    true_count = 0
+    for values in combinations:
+        assignment = dict(zip(variables, values))
+        result = evaluate(formula, assignment)
+        if result:
+            print(f"Satisfying assignment: {assignment}")
+            true_count += 1
+        else:
+            print(f"Failed assignment: {assignment}")
+    if true_count == len(combinations):
+        print("\nResult: VALID")
+    elif true_count > 0:
+        print("\nResult: SATISFIABLE")
+    else:
+        print("\nResult: UNSATISFIABLE")
+
+if __name__ == "__main__":
+    formula = "(A and B) or (not A and not B)"
+    print(f"Checking formula: {formula}\n")
+    model_checking(formula)

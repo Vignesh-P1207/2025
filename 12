@@ -1,0 +1,9 @@
+P_H = 0.005
+P_not_H = 1 - P_H
+P_E_given_H = 0.98
+P_E_given_not_H = 0.02
+P_E = (P_E_given_H * P_H) + (P_E_given_not_H * P_not_H)
+P_H_given_E = (P_E_given_H * P_H) / P_E
+
+print("Probability of having the disease given a positive test result:")
+print(f"P(Disease | Positive Test) = {P_H_given_E:.4f} or {P_H_given_E * 100:.2f}%")
